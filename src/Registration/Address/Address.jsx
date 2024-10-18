@@ -1,42 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
-const Address = () => {
+const Address = ({ onNext, onPrevious }) => {
   const [accordionOpen, setAccordionOpen] = useState({
     address: false,
     passport: false,
   });
 
-  const [formData, setFormData] = useState(() => {
-    const savedData = localStorage.getItem("addressAndPassportInfo");
-    return savedData
-      ? JSON.parse(savedData)
-      : {
-          nativeCountry: "",
-          nativeState: "",
-          nativeCity: "",
-          postalCode: "",
-          passportNo: "",
-          passportExpiry: "",
-        };
+  const [data, setData] = useState({
+    nativeCountry: "",
+    nativeState: "",
+    nativeCity: "",
+    postalCode: "",
+    passportNo: "",
+    passportExpiry: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    localStorage.setItem("addressAndPassportInfo", JSON.stringify(formData));
-  }, [formData]);
-
   const validate = () => {
     let newErrors = {};
 
-    if (!formData.nativeCountry)
+    if (!data.nativeCountry)
       newErrors.nativeCountry = "Native Country is required";
-    if (!formData.nativeState)
-      newErrors.nativeState = "Native State is required";
-    if (!formData.nativeCity) newErrors.nativeCity = "Native City is required";
-    if (!formData.postalCode) newErrors.postalCode = "Postal Code is required";
-    if (!formData.passportNo) newErrors.passportNo = "Passport No. is required";
-    if (!formData.passportExpiry)
+    if (!data.nativeState) newErrors.nativeState = "Native State is required";
+    if (!data.nativeCity) newErrors.nativeCity = "Native City is required";
+    if (!data.postalCode) newErrors.postalCode = "Postal Code is required";
+    if (!data.passportNo) newErrors.passportNo = "Passport No. is required";
+    if (!data.passportExpiry)
       newErrors.passportExpiry = "Passport Expiry is required";
 
     setErrors(newErrors);
@@ -45,15 +35,13 @@ const Address = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setData({ ...data, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleNext = (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log("Form data is valid:", formData);
-    } else {
-      console.log("Form data is invalid:", errors);
+      onNext(data);
     }
   };
 
@@ -67,7 +55,7 @@ const Address = () => {
         Address & Passport Information
       </h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleNext}>
         <div>
           <div className="mb-2">
             <button
@@ -106,7 +94,7 @@ const Address = () => {
                     {field.type === "select" ? (
                       <select
                         name={field.name}
-                        value={formData[field.name]}
+                        value={data[field.name]}
                         onChange={handleChange}
                         className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
                       >
@@ -121,7 +109,7 @@ const Address = () => {
                       <input
                         type={field.type}
                         name={field.name}
-                        value={formData[field.name]}
+                        value={data[field.name]}
                         onChange={handleChange}
                         className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
                         required
@@ -162,7 +150,7 @@ const Address = () => {
                     <input
                       type={field.type}
                       name={field.name}
-                      value={formData[field.name]}
+                      value={data[field.name]}
                       onChange={handleChange}
                       className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
                       required
@@ -179,9 +167,16 @@ const Address = () => {
           </div>
         </div>
 
-        <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
-          Submit
-        </button>
+        <div className="mb-4">
+          <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+            Submit
+          </button>
+        </div>
+        <div className="mb-4">
+          <button onClick={onPrevious} className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+            Previous
+          </button>
+        </div>
       </form>
     </div>
   );

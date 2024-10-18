@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-const Personal = () => {
-  const [formData, setFormData] = useState({
+const Personal = ({ onNext, onPrevious }) => {
+  const [data, setData] = useState({
     title: "",
     firstName: "",
     middleName: "",
@@ -16,20 +16,21 @@ const Personal = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setData({ ...data, [name]: value });
   };
 
-   const handleSubmit = (e) => {
+  const handleNext = (e) => {
     e.preventDefault();
-    console.log(formData);
-   }
+    onNext(data);
+  };
+
   return (
     <div className="p-8 bg-white rounded shadow-md max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
         Personal Information
       </h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleNext}>
         {[
           {
             label: "Title",
@@ -68,7 +69,7 @@ const Personal = () => {
             {field.type === "select" ? (
               <select
                 name={field.name}
-                value={formData[field.name]}
+                value={data[field.name]}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
               >
@@ -83,7 +84,7 @@ const Personal = () => {
               <input
                 type={field.type}
                 name={field.name}
-                value={formData[field.name]}
+                value={data[field.name]}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:border-blue-500 transition duration-300 ease-in-out"
                 required
@@ -92,9 +93,16 @@ const Personal = () => {
           </div>
         ))}
 
-        <button  className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
-          Submit
-        </button>
+        <div className="mb-4">
+          <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+            Submit
+          </button>
+        </div>
+        <div className="mb-4">
+          <button onClick={onPrevious} className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+            Previous
+          </button>
+        </div>
       </form>
     </div>
   );

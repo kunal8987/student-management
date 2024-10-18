@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../asset/Daltin_Logo.png";
 
-const Home = () => {
+const Home = ({ onNext }) => {
   const [step, setStep] = useState(1);
 
   const messages = [
@@ -11,6 +11,15 @@ const Home = () => {
     "Let us know your availability and preferred schedule.",
     "Review and confirm your details. You're almost done!",
   ];
+
+  const handleNext = () => {
+    if (step < 5) {
+      setStep(step + 1);
+    } else {
+      onNext(); // This will trigger the parent's onNext to move to PersonalInfo
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md text-center">
@@ -39,7 +48,7 @@ const Home = () => {
           Step {step} of 5
         </p>
         <button
-          onClick={() => setStep(step < 5 ? step + 1 : step)}
+          onClick={handleNext}
           className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
         >
           {step < 5 ? "Next Step" : "Let's Start"}
